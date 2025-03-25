@@ -39,6 +39,7 @@ app.get('/sse', (req, res) => {
     res.write(`data: ${JSON.stringify(data)}\n\n`);
   };
 
+  // Envia os eventos iniciais
   calendar.events.list(
     {
       calendarId: 'primary',
@@ -62,6 +63,7 @@ app.get('/sse', (req, res) => {
     }
   );
 
+  // Mantém a conexão aberta para eventos futuros
   req.on('close', () => {
     res.end();
   });
@@ -70,7 +72,7 @@ app.get('/sse', (req, res) => {
 // Endpoint para autenticação
 app.get('/auth', (req, res) => {
   const url = oauth2Client.generateAuthUrl({
-    access_type: 'offline', // Garante que o refresh_token seja retornado
+    access_type: 'offline',
     scope: ['https://www.googleapis.com/auth/calendar.readonly'],
   });
   res.redirect(url);
