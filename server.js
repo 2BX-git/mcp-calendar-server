@@ -70,6 +70,7 @@ app.get('/sse', (req, res) => {
 // Endpoint para autenticação
 app.get('/auth', (req, res) => {
   const url = oauth2Client.generateAuthUrl({
+    access_type: 'offline', // Garante que o refresh_token seja retornado
     scope: ['https://www.googleapis.com/auth/calendar.readonly'],
   });
   res.redirect(url);
