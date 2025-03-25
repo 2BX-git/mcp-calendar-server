@@ -276,64 +276,6 @@ app.post('/execute-tool', (req, res) => {
   }
 });
 
-// Endpoint SSE para listar eventos (mantido para compatibilidade)
-app.get('/sse', (req, res) => {
-  console.log('Recebida solicitação para /sse');
-
-  oauth2Client.setCredentials({
-    refresh_token: process.env.GOOGLE_REFRESH_TOKEN,
-  });
-
-  const calendar = google.calendar({ version: 'v3', auth: oauth2Client });
-
-  res.setHeader('Content-Type', 'text/event-stream');
-  res.setHeader('Cache-Control', 'no-cache');
-  res.setHeader('Connection', 'keep-alive');
-
-  const sendEvent = (data) => {
-    console.log('Enviando evento:', data);
-    res.write(`data: ${JSON.stringify(data)}\n\n`);
-  };
-
-  console.log('Listando eventos do Google Calendar...');
-  calendar.events.list(
-    {
-      calendarId: 'primary',
-      timeMin: '2025-01-01T00:00:00Z',
-      timeMax: '2025-12-31T23:59:59Z',
-      maxResults: 10,
-      singleEvents: true,
-      orderBy: 'startTime',
-    },
-    (err, response) => {
-      if (err) {
-        console.error('Erro ao listar eventos:', err.message);
-        sendEvent({ error: err.message });
-        return;
-      }
-      console.log('Eventos recebidos do Google Calendar:', response.data.items);
-      const events = response.data.items.map(event => ({
-        id: event.id,
-        summary: event.summary,
-        start: event.start.dateTime || event.start.date,
-        end: event.end.dateTime || event.end.date,
-      }));
-      sendEvent({ events });
-    }
-  );
-
-  const keepAliveInterval = setInterval(() => {
-    console.log('Enviando keep-alive');
-    res.write(`data: {"keepAlive": true}\n\n`);
-  }, 15000);
-
-  req.on('close', () => {
-    console.log('Conexão SSE fechada pelo cliente');
-    clearInterval(keepAliveInterval);
-    res.end();
-  });
-});
-
 // Endpoint para autenticação
 app.get('/auth', (req, res) => {
   const url = oauth2Client.generateAuthUrl({
