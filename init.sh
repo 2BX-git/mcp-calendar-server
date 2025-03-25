@@ -56,16 +56,22 @@ get_refresh_token() {
     echo "Erro: O refresh_token não foi retornado na resposta do Google."
     echo "Resposta do Google: $RESPONSE"
     echo "Possíveis causas:"
-    echo "1. O refresh_token já foi gerado anteriormente para este cliente e usuário. Você pode revogar o acesso em https://myaccount.google.com/permissions e tentar novamente."
-    echo "2. O cliente OAuth 2.0 não está configurado para emitir refresh_tokens."
-    echo "Por favor, revogue o acesso e repita o processo acessando $AUTH_URL novamente."
+    echo "1. O refresh_token já foi gerado anteriormente para este cliente e usuário."
+    echo "   - Revogue o acesso em https://myaccount.google.com/permissions e tente novamente."
+    echo "2. O cliente OAuth 2.0 não está configurado corretamente."
+    echo "   - Verifique as credenciais no Google Cloud Console."
+    echo "Por favor, corrija o problema e reinicie o serviço."
     exit 1
   fi
 
-  echo "Refresh token obtido: $REFRESH_TOKEN"
-
-  # Salva o refresh_token em um arquivo temporário
-  echo "GOOGLE_REFRESH_TOKEN=$REFRESH_TOKEN" > /tmp/refresh_token
+  echo "---------------------------------------------------------"
+  echo "Refresh token obtido com sucesso!"
+  echo "Adicione a seguinte variável ao Easypanel em 'Environment':"
+  echo "GOOGLE_REFRESH_TOKEN=$REFRESH_TOKEN"
+  echo "Depois de adicionar a variável, reinicie o serviço no Easypanel."
+  echo "---------------------------------------------------------"
+  echo "O serviço será interrompido agora. Reinicie após configurar o refresh_token."
+  exit 0
 }
 
 # Início do script
@@ -96,11 +102,5 @@ fi
 # Obtém o code
 get_auth_code
 
-# Obtém o refresh_token
+# Obtém o refresh_token e exibe na tela
 get_refresh_token
-
-# Atualiza a variável GOOGLE_REFRESH_TOKEN no ambiente atual
-export GOOGLE_REFRESH_TOKEN=$(cat /tmp/refresh_token | grep -o 'GOOGLE_REFRESH_TOKEN=.*' | cut -d'=' -f2)
-
-# Inicia o servidor
-npm start
