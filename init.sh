@@ -53,7 +53,12 @@ get_refresh_token() {
   REFRESH_TOKEN=$(echo $RESPONSE | grep -o '"refresh_token":"[^"]*' | sed 's/"refresh_token":"//')
 
   if [ -z "$REFRESH_TOKEN" ]; then
-    echo "Erro ao obter o refresh_token. Resposta do Google: $RESPONSE"
+    echo "Erro: O refresh_token não foi retornado na resposta do Google."
+    echo "Resposta do Google: $RESPONSE"
+    echo "Possíveis causas:"
+    echo "1. O refresh_token já foi gerado anteriormente para este cliente e usuário. Você pode revogar o acesso em https://myaccount.google.com/permissions e tentar novamente."
+    echo "2. O cliente OAuth 2.0 não está configurado para emitir refresh_tokens."
+    echo "Por favor, revogue o acesso e repita o processo acessando $AUTH_URL novamente."
     exit 1
   fi
 
