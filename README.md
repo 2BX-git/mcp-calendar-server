@@ -25,3 +25,14 @@ Este projeto implementa um servidor MCP que integra o Google Calendar com o n8n 
    ```bash
    git clone https://github.com/2BX-git/mcp-calendar-server.git
    cd mcp-calendar-server
+
+2. Configure as variáveis de ambiente no Easypanel
+   
+BASE_URL=https://sua-url
+GOOGLE_CLIENT_ID=seu-client-id.apps.googleusercontent.com
+GOOGLE_CLIENT_SECRET=seu-client-secret
+PORT=3001
+
+3.Implante o serviço:
+- Configure o serviço para usar o Dockerfile.
+- Clique em "Deploy".
